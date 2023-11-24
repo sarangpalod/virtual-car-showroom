@@ -37,7 +37,7 @@ const [date ,setDate] = React.useState("");
             address,
             state,
             pin,
-            model,
+            car_model : model,
             date,
         };
         const res = await axios

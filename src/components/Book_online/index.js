@@ -5,16 +5,28 @@ import "aos/dist/aos.css";
 import Header from "../Header"; 
 import Footer from "../Footer";
 import 'bootstrap/dist/css/bootstrap.css';
+import axios from "axios";
 
 const Bookonline = () =>{
     document.title = "BOOK ONLINE | KIA";
+
+    const [name, setName] = React.useState("");
+    const [phone, setPhone] = React.useState("");
+    const [email, setEmail] = React.useState("");
+    const [address, setAddress] = React.useState("");
+    const [state, setState] = React.useState("");
+    const [pin, setPin] = React.useState("");
+    const [modelName, setModelName] = React.useState("");
+    const [colorName, setColorName] = React.useState("");
+    const [wheels, setWheels] = React.useState("");
+    const [roof, setRoof] = React.useState("");
+    const [gear, setGear] = React.useState("");
+    const [date, setDate] = React.useState("");
+
     useEffect(() => {
         AOS.init({duration: 1400});
     }, []);
-    const handleClick = (e) => {
-        e.preventDefault();
-        alert("Are you sure you want to submit?");
-      }
+    
       const models = [
         {id:'1',name:'Carens'},
         {id:'2',name:'EV6'},
@@ -52,9 +64,78 @@ const Bookonline = () =>{
       useEffect(() => {
         setModel(models);
       },[])
+      
       const handleModel = (id) =>{
+        
         const dt = colors.filter(x => x.modelId === id);
         setColor(dt);
+        
+        const modelnm = models.filter(x => x.id === id);
+        setModelName(modelnm[0].id); 
+        
+    
+      }
+
+
+      const handleClick = async(e) => {
+        e.preventDefault();
+        if(!name || !phone || !email || !address || !state || !pin || !wheels || !roof || !gear || !date){
+            alert("Please fill all the details");
+            return;
+        }
+
+        
+        
+        const data = {
+            name,
+            phone,
+            email,
+            address,
+            state,
+            pin,
+            modelName : model.filter(x => x.id === modelName)[0].name,
+            colorName : color.filter(x => x.id === colorName)[0].name,
+            wheels,
+            roof,
+            gear,
+            date,
+        };
+        const res = await axios
+            .post(`${process.env.REACT_APP_API_URL}/book`, data)
+            .then((res) => {
+            // alert("Your request has been submitted successfully");
+            setName("");
+            setPhone("");
+            setEmail("");
+            setAddress("");
+            setState("");
+            setPin("");
+            setModelName("");
+            setColorName("");
+            setWheels("");
+            setRoof("");
+            setGear("");
+            setDate("");
+            })
+            .catch((err) => {
+            console.log(err);
+            });
+
+            alert("Your request has been submitted successfully");
+
+            //clearing the form
+            setName("");
+            setPhone("");
+            setEmail("");
+            setAddress("");
+            setState("");
+            setPin("");
+            setModelName("");
+            setColorName("");
+            setWheels("");
+            setRoof("");
+            setGear("");
+            setDate("");
       }
     return(
         <Wrapper>
@@ -68,15 +149,35 @@ const Bookonline = () =>{
                     <form action="#">
                         <div className="main">
                         <label htmlFor="name" className="label">Full Name:</label>
-                        <input type="text" id="name" placeholder="Enter your name" className="input"/>
+                        <input 
+                        type="text" 
+                        id="name" 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter your name" 
+                        className="input"
+                        
+                        />
                         <label htmlFor="phone" className="label">Phone No.:</label>
-                        <input type="text" id="phone" placeholder="Enter your phone number" className="input"/>
+                        <input type="text" id="phone" 
+                        value={phone} 
+                        onChange={(e) => setPhone(e.target.value)}
+                         placeholder="Enter your phone number" className="input"/>
                         <label htmlFor="email" className="label">Email ID:</label>
-                        <input type="text" id="email" placeholder="Enter your email id" className="input"/>
+                        <input type="text" id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                         placeholder="Enter your email id" className="input"/>
                         <label htmlFor="address" className="label">Address:</label>
-                        <textarea name="address" id="address" cols="20" rows="8" placeholder="Enter your address" className="input"></textarea>
+                        <textarea name="address" id="address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                         cols="20" rows="8" placeholder="Enter your address" className="input"></textarea>
                         <label htmlFor="state" className="label">State/province:</label>
-                        <select id="state" className="input">
+                        <select id="state" 
+                        value={state}
+                        onChange={(e) => setState(e.target.value)}
+                        className="input">
                         <option value="">Select place</option>
                         <option value="andra">Andhra Pradesh</option>
                         <option value="arunachal">Arunachal Pradesh</option>
@@ -106,11 +207,17 @@ const Bookonline = () =>{
                         <option value="west">West Bengal</option>
                         </select>
                         <label htmlFor="pin" className="label">Postal/zipcode:</label>
-                        <input type="text" id="pin" placeholder="Enter your Pincode" className="input"/>
+                        <input type="text" id="pin" 
+                        value={pin}
+                        onChange={(e) => setPin(e.target.value)}
+                         placeholder="Enter your Pincode" className="input"/>
                         <p className="h">Customise vehicle</p>
                         <br />
                         <label htmlFor="model" className="label">Kia Model:</label>
-                        <select id='model' className="input" onChange={(e)=>handleModel(e.target.value)}>
+                        <select id='model' 
+                         value={modelName}
+                            
+                        className="input" onChange={(e)=>handleModel(e.target.value)}>
                             <option value="0">Select car model</option>
                         {
                             model &&
@@ -124,7 +231,10 @@ const Bookonline = () =>{
                         }
                         </select>
                         <label htmlFor="color" className="label">Color:</label>
-                        <select id='color' className="input">
+                        <select id='color' 
+                        value={colorName}
+                        onChange={(e) => setColorName(e.target.value)}
+                        className="input">
                             <option value="0">Select car color</option>
                         {
                             color &&
@@ -138,46 +248,59 @@ const Bookonline = () =>{
                         }
                         </select>
                         <label htmlFor="wheels" className="label">Alloy Wheels</label>
-                        <select id="wheels" className="input">
+                        <select id="wheels"
+                        value={wheels}
+                        onChange={(e) => setWheels(e.target.value)}
+                         className="input">
                             <option value="">Select</option>
                             <option value="chrome">Chrome</option>
                             <option value="steel">Steel</option>
                             <option value="diamond">Diamond cut</option>
                             <option value="aluminium">Aluminium</option>
                         </select>
-                        <div className="radio">
+                        <div className="radio"
+                        onChange={(e) => setRoof(e.target.value)}>
                         <label htmlFor="roof" className="label">Do you want sunroof?</label><br />
-                        <input type="radio" name="roof"/> Yes
+                        <input type="radio"
+                        value="Yes"
+                        
+                         name="roof"/> Yes
                         <br />
-                        <input type="radio" name='roof'/> No
+                        <input type="radio" 
+                        value="No"
+                        name='roof'/> No
                         </div>
                         <br />
-                        <div className="gear">
+                        <div className="gear"
+                        onChange={(e) => setGear(e.target.value)}>
                         <label htmlFor="gear" className="label">Select your required type of transmission</label><br />
-                        <input type="radio" name="gear"/> Manual
+                        <input type="radio"
+                        value="Manual"
+                        
+                         name="gear"/> Manual
                         <br />
-                        <input type="radio" name='gear'/> Automatic
+                        <input type="radio" 
+                        value="Automatic"
+                        
+                        name='gear'/> Automatic
                         <br />
-                        <input type="radio" name='gear'/> CVT
+                        <input type="radio" 
+                        value="CVT"
+                        name='gear'/> CVT
                         <br />
-                        <input type="radio" name='gear'/> Dual-Clutch
+                        <input type="radio"
+                        value="Dual-Clutch"
+                         name='gear'/> Dual-Clutch
                         </div>
                         <br />
-                        <div className="others">
-                        <label htmlFor="others" className="label">Select your required type of transmission</label><br />
-                        <input type="radio" name="gear"/> Manual
-                        <br />
-                        <input type="radio" name='gear'/> Automatic
-                        <br />
-                        <input type="radio" name='gear'/> CVT
-                        <br />
-                        <input type="radio" name='gear'/> Dual-Clutch
-                        </div>
-                        <br />
+                        
                         <p className="h">Consent</p>
                         <br />
                         <label htmlFor="date" className="label">Select Preferred Date for call from our agent:</label>
-                        <input type="date" id="date" placeholder="dd/mm/yyyy" className="input"/>
+                        <input type="date" id="date" 
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                         placeholder="dd/mm/yyyy" className="input"/>
                         <div><input type="checkbox" /> I agree with the <a href="">terms and conditions*</a><br />
                         <input type="checkbox" /> I want to share details with KIA sales department to help me with my legal documents and payment.
                         </div>
