@@ -52,7 +52,7 @@ const Signup = () =>{
             <div className="header" >
                 <div>
                     <Link to='/'>
-                        <img src="/images/logo.svg" alt="logo"/>
+                        <img src="/images/Kia-new-logo.svg" alt="logo"/>
                     </Link>
                 </div>
                 <div className="lang" >
